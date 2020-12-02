@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Debug": {
+      "commandName": "Project",
+      "commandLineArgs": "-c script -f \"XYZ.dacpac\" --connection \"Data Source=localhost;Initial Catalog=Test;Persist Security Info=True;User ID=sa;Password=Password\" -a \"[BlockOnPossibleDataLoss=true,IncludeTransactionalScripts=false]\""
+    }
+  }
+}
