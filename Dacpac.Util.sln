@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{79EA32
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dacpac.Util.Tests", "src\Dacpac.Util.Tests\Dacpac.Util.Tests.csproj", "{DB39B413-2592-426D-96F1-575AD40D64CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,12 +36,17 @@ Global
 		{83861469-6C60-4614-B4EA-B3658EF54D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83861469-6C60-4614-B4EA-B3658EF54D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83861469-6C60-4614-B4EA-B3658EF54D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB39B413-2592-426D-96F1-575AD40D64CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB39B413-2592-426D-96F1-575AD40D64CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB39B413-2592-426D-96F1-575AD40D64CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB39B413-2592-426D-96F1-575AD40D64CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{83861469-6C60-4614-B4EA-B3658EF54D39} = {645CD05A-00AF-48F9-B771-0AB762A64EDC}
+		{DB39B413-2592-426D-96F1-575AD40D64CE} = {645CD05A-00AF-48F9-B771-0AB762A64EDC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7C1F1E3A-1F82-4E10-99D1-F5264B9854F1}
