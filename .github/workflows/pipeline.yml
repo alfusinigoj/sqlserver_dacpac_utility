@@ -11,9 +11,7 @@ jobs:
     steps:
       # Checks-out repository
       - uses: actions/checkout@v1
-        with:
-          ref: refs/heads/master
-          fetch-depth: 1
+        
       # Execute psake build
       - run: |
           ./build.sh ci
