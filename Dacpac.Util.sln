@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{48246214-AE96-
 		build.sh = build.sh
 		configure-build.ps1 = configure-build.ps1
 		default.ps1 = default.ps1
+		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{79EA32EE-4576-41A1-8C8B-DD8ACF06676E}"

@@ -19,13 +19,13 @@ Download latest `DacpacUtil.exe` [here]()
 
 > Note: Eligible arguments can be passed as environment variable, as env:<variable_name>
 
-### Samples
+### Sample Command
 ```
 DacpacUtil.exe -c deploy -p XYZ.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=somepassword" -a [BlockOnPossibleDataLoss=false]
 ```
 
 ```
-DacpacUtil.exe -c deploy -p "c:\\XYZ.dacpac" -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false]
+DacpacUtil.exe -c deploy -p "c:\XYZ.dacpac" -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false]
 ```
 
 ### Developer Notes

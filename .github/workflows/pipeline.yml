@@ -1,7 +1,10 @@
 name: Build and Publish
 
 on:
-  workflow_dispatch:
+  #workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build_and_release:
@@ -11,6 +14,9 @@ jobs:
     steps:
       # Checks-out repository
       - uses: actions/checkout@v1
+        with:
+            ref: refs/heads/main
+            fetch-depth: 1
         
       # Execute psake build
       - run: |
