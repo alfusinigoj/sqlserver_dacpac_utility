@@ -1,0 +1,21 @@
+name: Build and Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/core/sdk:3.1
+    steps:
+      # Checks-out repository
+      - uses: actions/checkout@v1
+        with:
+          ref: refs/heads/master
+          fetch-depth: 1
+      # Execute psake build
+      - run: |
+          ./build.sh ci
+          cd _publish
+          ls
