@@ -9,7 +9,7 @@ using System.CommandLine.Hosting;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
-namespace PivotalServices.Dacpac.Util
+namespace PivotalServices.DacpacDeploy.Utility
 {
     class Program
     {

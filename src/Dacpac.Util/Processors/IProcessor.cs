@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace PivotalServices.Dacpac.Util
+namespace PivotalServices.DacpacDeploy.Utility
 {
     public interface IProcessor
     {

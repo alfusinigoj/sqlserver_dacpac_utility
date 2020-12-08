@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace PivotalServices.Dacpac.Util
+namespace PivotalServices.DacpacDeploy.Utility
 {
     public class DacpacOptions
     {

@@ -2,14 +2,9 @@ $script:project_config = "Release"
 
 properties {
 
-  $solution_name = "Dacpac.Util"
-  $domain = ""
-  $environment = "Development"
-  $app_name = "Dacpac.Util"
-
   $base_dir = resolve-path .
-  $project_dir = "$base_dir\src\$project_name"
-  $project_file = "$project_dir\$project_name.csproj"
+  $project_dir = "$base_dir\src\$solution_name"
+  $project_file = "$project_dir\$solution_name.csproj"
   $solution_file = "$base_dir\$solution_name.sln"
   $publish_dir = "$base_dir\_publish"
   $release_id = "win-x64"
@@ -44,7 +39,6 @@ task help {
 
 #These are the actual build tasks. They should be Pascal case by convention
 task DeveloperBuild -depends SetDebugBuild, PackageRestore, Clean, Compile, RunTests
-#task IntegrationBuild -depends SetReleaseBuild, SetCiProperties, PackageRestore, Clean, Compile, RunTests, Publish
 task IntegrationBuild -depends SetReleaseBuild, PackageRestore, Clean, Compile, RunTests, Publish
 task PublishLocally -depends SetDebugBuild, PackageRestore, Clean, Compile, RunTests, Publish
 

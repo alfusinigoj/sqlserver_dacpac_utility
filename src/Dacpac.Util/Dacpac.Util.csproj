@@ -6,14 +6,14 @@
 	  <PublishSingleFile>true</PublishSingleFile>
 	  <PublishTrimmed>false</PublishTrimmed>
 	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	  <RootNamespace>PivotalServices.Dacpac.Util</RootNamespace>
+	  <RootNamespace>PivotalServices.DacpacDeploy.Utility</RootNamespace>
 	  <LangVersion>8</LangVersion>
 	  <NoWarn>$(NoWarn);CS1591</NoWarn>
 	  <Version>1.0.0</Version>
 	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
 	  <FileVersion>1.0.0.0</FileVersion>
-	  <Company>PivotalServices</Company>
-	  <Authors>alfusjaganathan.com</Authors>
+	  <Company>alfusjaganathan.com</Company>
+	  <Authors>ajaganathan</Authors>
 	  <Product>Dacpac utility</Product>
 	  <Description>Command line helper tool for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150</Description>
 	  <AssemblyName>DacpacDeployUtil</AssemblyName>

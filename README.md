@@ -1,5 +1,5 @@
 
-### DacpacDeployUtil
+### PivotalServices.DacpacDeploy.Utility (DacpacDeployUtil.exe)
 Command line helper utility for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer [here](https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150)
 
 ### Release
@@ -21,7 +21,7 @@ Download latest `DacpacDeployUtil.exe` [here]()
 > Note: Eligible arguments can be passed as environment variable, as env:<variable_name>
 > Note: Any object with tokens will always be redeployed regardless of its change status (modified or not)
 
-### Samples
+### Sample Commands
 ```
 DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=password1" -a [BlockOnPossibleDataLoss=false] -p [SERVER=server2] 
 ```
@@ -30,10 +30,6 @@ DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Ca
 DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false] -p [SERVER=server2]
 ```
 
-### Developer Notes
-- Compile the application using the below commands, from the path where solution file is.
-    - `build` - for compiling and running tests
-    - `build p` - for publishing the application in `_publish` folder'
-    - `build ci` - for integration build in ci pipeline
-  - For more details, refer to `default.ps1`
-  -To modify the assembly version based on releases, you can modify `build.properties` file with `major.minor.patch` format
+- **Hope this help you! For any issues, please raise issues [here](https://github.com/alfusinigoj/sqlserver_dacpac_utility/issues) 
+
+
