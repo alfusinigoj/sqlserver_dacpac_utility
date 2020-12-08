@@ -16,7 +16,7 @@
 	  <Authors>alfusjaganathan.com</Authors>
 	  <Product>Dacpac utility</Product>
 	  <Description>Command line helper tool for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150</Description>
-	  <AssemblyName>DacpacUtil</AssemblyName>
+	  <AssemblyName>DacpacDeployUtil</AssemblyName>
   </PropertyGroup>
 
 	<ItemGroup>

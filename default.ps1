@@ -54,8 +54,11 @@ task SetDebugBuild {
 
 task SetReleaseBuild {
     $script:project_config = "Release"
+	Push-Location Env:
 	[System.Environment]::SetEnvironmentVariable('MY_VERSION', $version, [System.EnvironmentVariableTarget]::User)
+	#$env:MY_VERSION = $version
 	Write-Host $env:MY_VERSION
+	Pop-Location
 }
 
 task SetCiProperties {
