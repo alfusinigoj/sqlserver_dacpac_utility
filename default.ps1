@@ -51,6 +51,20 @@ task SetReleaseBuild {
     $script:project_config = "Release"
 }
 
+task SetVersionInfo {
+    exec { 
+        & .\tools\gitversion /t:restore $solution_file /v:m /p:NuGetInteractive="true"
+        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+    }
+
+    foreach ($Line in (Get-Content -Raw ./variables.json | ConvertFrom-Json))
+    {
+    New-Item -Path Env:$Line.Name -Value $Line.Value
+    }
+}
+
+
+
 task Restore {
     Write-Host "******************* Now restoring the solution dependencies *********************"
     exec { 
