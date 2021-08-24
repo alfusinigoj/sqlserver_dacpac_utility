@@ -12,15 +12,15 @@ properties {
   $date = Get-Date 
   $version = get_version
   $release_id = "win-x64"
+  $platform = "Any CPU"
 }
 
 #These are aliases for other build tasks. They typically are named after the camelcase letters (rd = Rebuild Databases)
 task default -depends DevBuild
 task cib -depends CiBuild
-task cipk -depends CiPack
-task dpk -depends DevPack
+task cip -depends CiPublish
+task dp -depends DevPublish
 task ? -depends help
-
 
 task emitProperties {
   Write-Host "solution_name=$solution_name"
@@ -36,16 +36,17 @@ task help {
    Write-Help-Header
    Write-Help-Section-Header "Comprehensive Building"
    Write-Help-For-Alias "(default)" "Intended for first build or when you want a fresh, clean local copy"
-   Write-Help-For-Alias "ci" "Continuous Integration build (long and thorough) with packaging"
+   Write-Help-For-Alias "cip" "Continuous Integration build (long and thorough) with publishing"
+   Write-Help-For-Alias "dp" "Publish in developer machine, locally"
    Write-Help-Footer
    exit 0
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
 task DevBuild -depends WriteVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
-task DevPack -depends DevBuild, Publish
+task DevPublish -depends DevBuild, Publish
 task CiBuild -depends WriteVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
-task CiPack -depends CiBuild, Publish
+task CiPublish -depends CiBuild, Publish
 
 task SetDebugBuild {
     $script:project_config = "Debug"
@@ -84,7 +85,7 @@ task Restore {
 task Compile -depends Restore {
     Write-Host "******************* Now compiling the solution *********************"
     exec { 
-        & $msbuild /t:build /v:m /p:Configuration=$project_config /nologo /p:Platform="Any CPU" /nologo $solution_file 
+        & $msbuild /t:build /v:m /p:Configuration=$project_config /nologo /p:Platform=$platform /nologo $solution_file 
     }
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
@@ -102,11 +103,10 @@ task UnitTest -depends Compile{
  task Publish -depends Clean, Restore {
     Write-Host "******************* Now publishing the project $project_file *********************"
     exec { 
-        & $msbuild /t:publish /v:m /p:PublishTrimmed="true" /p:PublishReadyToRun="false" /p:PublishSingleFile="true" /p:Platform="Any CPU" /p:SelfContained="true" /p:RuntimeIdentifier=$release_id /p:PublishDir=$publish_dir /p:Configuration=$project_config /nologo /nologo $project_file 
+        & $msbuild /t:publish /v:m /p:PublishTrimmed="true" /p:PublishReadyToRun="false" /p:PublishSingleFile="true" /p:Platform=$platform /p:SelfContained="true" /p:RuntimeIdentifier=$release_id /p:PublishDir=$publish_dir /p:Configuration=$project_config /nologo /nologo $project_file 
     }
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
-
 
 # -------------------------------------------------------------------------------------------------------------
 # generalized functions for Help Section
