@@ -1,4 +1,4 @@
-name: Build and Publish
+name: Build and Publish Prerelease/Draft version
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         id: read_version
         uses: juliangruber/read-file-action@v1
         with:
-          path: .\.version
+          path: ./.version
       
       - name: Set tag version to environment variable TAG_VERSION
         run: |
@@ -29,7 +29,7 @@ jobs:
         
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "publish-artifacts\DacpacDeployUtil.exe"
+          artifacts: "publish-artifacts/DacpacDeployUtil.exe"
           token: ${{ secrets.RELEASE_TOKEN_GITHUB }}
           draft: true
           prerelease: true
