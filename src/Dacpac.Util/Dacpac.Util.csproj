@@ -28,8 +28,8 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
 		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="150.5164.1" />
-		<PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-		<PackageReference Include="System.CommandLine.Hosting" Version="0.3.0-alpha.20371.2" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
+		<PackageReference Include="System.CommandLine.Hosting" Version="0.3.0-alpha.21216.1" />
 		<PackageReference Include="Microsoft.Data.SqlClient.SNI.runtime" Version="3.0.0" />
 	</ItemGroup>
 
