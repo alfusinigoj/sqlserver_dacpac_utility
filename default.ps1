@@ -43,9 +43,9 @@ task help {
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
-task DevBuild -depends WriteVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task DevBuild -depends WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
 task DevPublish -depends DevBuild, Publish
-task CiBuild -depends WriteVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
 task CiPublish -depends CiBuild, Publish
 
 task SetDebugBuild {
@@ -56,8 +56,8 @@ task SetReleaseBuild {
     $script:project_config = "Release"
 }
 
-task WriteVersion {
-    echo $version > .version
+task WriteTagVersion {
+    echo "TAG_VERSION=v$version" > .version
 }
 
 task Clean {

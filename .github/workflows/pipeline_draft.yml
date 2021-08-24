@@ -1,0 +1,37 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:   
+      - feature/**
+jobs:
+  build:
+    runs-on: windows-latest  
+    steps:
+      # Checks-out repository
+      - uses: actions/checkout@v1
+
+      # Execute psake build script
+      - name: Execute psake build with argument (cip)
+        shell: cmd
+        run: |
+          build.cmd cip
+      
+      - name: Read tag version from .version file
+        id: read_version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: .\.version
+      
+      - name: Set tag version to environment variable TAG_VERSION
+        run: |
+          echo "${{ steps.read_version.outputs.content }}" >> $GITHUB_ENV
+        
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "publish-artifacts\DacpacDeployUtil.exe"
+          token: ${{ secrets.RELEASE_TOKEN_GITHUB }}
+          draft: true
+          prerelease: true
+          bodyFile: "RELEASE.md"
+          tag: ${{ env.TAG_VERSION }}
