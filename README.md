@@ -16,7 +16,7 @@ Command line helper utility for executing SQL Server Data-Tier Application Frame
 | -c, --command <command> | Yes | Dacpac command (script, deploy and extract) | No |
 | -f, --package <package> | Yes | Dacpac package full path or relative to the this exe including dacpac filename. | Yes |
 | -n, --connection <connection> | Yes |  Connection string of the target database. | Yes |
-| -p, --parameters  | No | Array of parameters (`\|` seperated, to do `@@token_name@@` token replacement in any scripts. E.g. To replace token `@@DATABASE@@` and `@@SERVER@@` in a script, your command argument should be -p [SERVER=env:`<env variable>`\|DATABASE=database1] | No |
+| -p, --parameters  | No | Array of parameters (`\|` seperated, to do `@@token_name@@` token replacement in `post deploy scripts`. E.g. To replace token `@@DATABASE@@` and `@@SERVER@@` in a script, your command argument should be -p [SERVER=env:`<env variable>`\|DATABASE=database1] | No |
 | -a, --arguments <arguments>  | No |  Array of arguments for commands; For `script` and `deploy` use [DacDeployOptions](https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac.dacdeployoptions?view=sql-dacfx-150); For `extract` use [DacExtractOptions](https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac.dacextractoptions?view=sql-dacfx-150); E.g -a [BlockOnPossibleDataLoss=true,IncludeTransactionalScripts=false]  | No |
 | --version   | No |  Show assembly version information | No |
 | -?, -h, --help   | No |  Show help and usage information | No |
