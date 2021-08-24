@@ -2,7 +2,7 @@
   "profiles": {
     "Debug": {
       "commandName": "Project",
-      "commandLineArgs": "-c script -f \"XYZ.dacpac\" --connection \"Data Source=localhost;Initial Catalog=Test;Persist Security Info=True;User ID=sa;Password=Password\" -a \"[BlockOnPossibleDataLoss=true,IncludeTransactionalScripts=false]\""
+      "commandLineArgs": "-c deploy -f c:\\DbUtilsSample.dacpac -n \"Data Source=DESKTOP-FMFT9P0\\SQLEXPRESS;Initial Catalog=DbUtilsSample;Persist Security Info=True;User ID=sa;Password=P@ssw0rd\""
     }
   }
 }

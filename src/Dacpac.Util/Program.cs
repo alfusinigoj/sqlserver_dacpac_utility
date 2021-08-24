@@ -8,32 +8,36 @@ using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using System.Net;
 
 namespace PivotalServices.DacpacDeploy.Utility
 {
     class Program
     {
-        static void Main(string[] args) => BuildCommandLine()
-            .UseHost(_ => Host.CreateDefaultBuilder(),
-                host =>
-                {
-                    host.ConfigureServices(services =>
-                    {
-                        services.AddSingleton<IProcessor, DacpacProcessor>();
-                    });
-                    host.ConfigureLogging(builder =>
-                    {
-                        builder.ClearProviders();
-                        builder.AddFilter("Default", LogLevel.Information)
-                               .AddFilter("Microsoft", LogLevel.Warning)
-                               .AddFilter("System", LogLevel.Warning)
-                               .AddConsole()
-                               .AddDebug();
-                    });
-                })
-            .UseDefaults()
-            .Build()
-            .Invoke(args);
+        static void Main(string[] args)
+        {
+            BuildCommandLine()
+              .UseHost(_ => Host.CreateDefaultBuilder(),
+                  host =>
+                  {
+                      host.ConfigureServices(services =>
+                      {
+                          services.AddSingleton<IProcessor, DacpacProcessor>();
+                      });
+                      host.ConfigureLogging(builder =>
+                      {
+                          builder.ClearProviders();
+                          builder.AddFilter("Default", LogLevel.Information)
+                                 .AddFilter("Microsoft", LogLevel.Warning)
+                                 .AddFilter("System", LogLevel.Warning)
+                                 .AddConsole()
+                                 .AddDebug();
+                      });
+                  })
+              .UseDefaults()
+              .Build()
+              .Invoke(args);
+        }
 
         private static CommandLineBuilder BuildCommandLine()
         {

@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>DacpacDeployUtil</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishTrimmed>true</PublishTrimmed>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RootNamespace>PivotalServices.DacpacDeploy.Utility</RootNamespace>
+    <Title>PivotalServices.DacpacDeploy.Utility</Title>
+    <Version>1.0.0</Version>
+    <Authors>ajaganathan</Authors>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>All rights reserved.</Copyright>
+    <RepositoryUrl>https://github.com/alfusinigoj/sqlserver_dacpac_utility.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Dacpac; CommandLine; DbDeploy</PackageTags>
+    <Description>Command line helper tool for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150</Description>
+    <PackageProjectUrl>https://www.alfusjaganathan.com/projects/</PackageProjectUrl>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="150.5164.1" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+		<PackageReference Include="System.CommandLine.Hosting" Version="0.3.0-alpha.20371.2" />
+		<PackageReference Include="Microsoft.Data.SqlClient.SNI.runtime" Version="3.0.0" />
+	</ItemGroup>
+
+</Project>
