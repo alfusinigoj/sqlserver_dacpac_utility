@@ -4,11 +4,14 @@ properties {
   $base_dir = resolve-path .
   $publish_dir = "$base_dir\publish-artifacts"
   $solution_file = "$base_dir\$solution_name.sln"
+  $project_file = "$base_dir\src\$solution_name\$solution_name.csproj"
   $test_dir = "$base_dir\test"
   $nuget = "nuget.exe"
   $msbuild = Get-LatestMsbuildLocation
   $vstest = get_vstest_executable
   $date = Get-Date 
+  $version = get_version
+  $release_id = "win-x64"
 }
 
 #These are aliases for other build tasks. They typically are named after the camelcase letters (rd = Rebuild Databases)
@@ -26,6 +29,7 @@ task emitProperties {
   Write-Host "test_dir=$test_dir"
   Write-Host "publish_dir=$publish_dir"
   Write-Host "project_config=$project_config"
+  Write-Host "version=$version"
 }
 
 task help {
@@ -38,10 +42,10 @@ task help {
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
-task DevBuild -depends SetDebugBuild, emitProperties, Restore, Clean, Compile, UnitTest
-task DevPack -depends DevBuild, Pack
-task CiBuild -depends SetReleaseBuild, emitProperties, Restore, Clean, Compile, UnitTest
-task CiPack -depends CiBuild, Pack
+task DevBuild -depends WriteVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task DevPack -depends DevBuild, Publish
+task CiBuild -depends WriteVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task CiPack -depends CiBuild, Publish
 
 task SetDebugBuild {
     $script:project_config = "Debug"
@@ -51,37 +55,30 @@ task SetReleaseBuild {
     $script:project_config = "Release"
 }
 
-task SetVersionInfo {
-    exec { 
-        & .\tools\gitversion /t:restore $solution_file /v:m /p:NuGetInteractive="true"
-        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-    }
-
-    foreach ($Line in (Get-Content -Raw ./variables.json | ConvertFrom-Json))
-    {
-    New-Item -Path Env:$Line.Name -Value $Line.Value
-    }
+task WriteVersion {
+    echo $version > .version
 }
 
-
-
-task Restore {
-    Write-Host "******************* Now restoring the solution dependencies *********************"
-    exec { 
-        & $msbuild /t:restore $solution_file /v:m /p:NuGetInteractive="true"
-        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-    }
-}
-
-task Clean -depends Restore{
+task Clean {
     Write-Host "******************* Now cleaning the solution and artifacts *********************"
     if (Test-Path $publish_dir) {
         delete_directory $publish_dir
     }
+
+    Get-ChildItem .\ -include obj,bin -Recurse | foreach ($_) { remove-item $_.fullname -Force -Recurse}
+
     exec { 
         & $msbuild /t:clean /v:m /p:Configuration=$project_config $solution_file 
     }
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+}
+
+task Restore {
+    Write-Host "******************* Now restoring the solution dependencies *********************"
+    exec { 
+        & $msbuild /t:restore $solution_file /v:m /p:NuGetInteractive="true" /p:RuntimeIdentifier=$release_id
+        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+    }
 }
 
 task Compile -depends Restore {
@@ -95,27 +92,18 @@ task Compile -depends Restore {
 task UnitTest -depends Compile{
     Write-Host "******************* Now running unit tests *********************"
     Push-Location $base_dir
-    $test_assemblies = @((Get-ChildItem -Recurse -Filter "*Tests.dll" | Where-Object {$_.Directory -like '*test*'}).FullName) -join ' '
+    $test_assemblies = @((Get-ChildItem -Recurse -Filter "*Tests.dll" | Where-Object {$_.Directory -like '*bin*'} | Where-Object {$_.Directory -notlike '*ref*'}).FullName) -join ' '
     Write-Host "Executing tests on the following assemblies: $test_assemblies"
     Start-Process -FilePath $vstest -ArgumentList $test_assemblies ,"/Parallel" -NoNewWindow -Wait
     Pop-Location
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
  }
 
- task Pack -depends Compile{
-    Write-Host "******************* Now creating nuget package(s) *********************"
-	Push-Location $base_dir
-	$projects = @(Get-ChildItem -Recurse -Filter "*.csproj" | Where-Object {$_.Directory -like '*src*'}).FullName	
-
-	foreach ($project in $projects) {
-		Write-Host "Executing nuget pack on the project: $project"
-		exec { 
-            & $msbuild /t:pack /v:m $project /p:OutputPath=$publish_dir /p:Configuration=$project_config
-            if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-        }
-	}
-
-	Pop-Location
+ task Publish -depends Clean, Restore {
+    Write-Host "******************* Now publishing the project $project_file *********************"
+    exec { 
+        & $msbuild /t:publish /v:m /p:PublishTrimmed="true" /p:PublishReadyToRun="false" /p:PublishSingleFile="true" /p:Platform="Any CPU" /p:SelfContained="true" /p:RuntimeIdentifier=$release_id /p:PublishDir=$publish_dir /p:Configuration=$project_config /nologo /nologo $project_file 
+    }
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
 
@@ -176,3 +164,9 @@ function global:get_vstest_executable() {
     $vstest_exe = join-path $vstest_exe 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
     return $vstest_exe
 }
+
+function global:get_version() {
+    $gitversion = "$base_dir\tools\gitversion\gitversion.exe"
+    return exec { & $gitversion /output json /showvariable FullSemVer }
+}
+
