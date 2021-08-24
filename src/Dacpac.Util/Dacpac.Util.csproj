@@ -12,17 +12,15 @@
     <Title>PivotalServices.DacpacDeploy.Utility</Title>
     <Version>1.0.0</Version>
     <Authors>ajaganathan</Authors>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>All rights reserved.</Copyright>
-    <RepositoryUrl>https://github.com/alfusinigoj/sqlserver_dacpac_utility.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>Dacpac; CommandLine; DbDeploy</PackageTags>
     <Description>Command line helper tool for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150</Description>
     <PackageProjectUrl>https://www.alfusjaganathan.com/projects/</PackageProjectUrl>
   </PropertyGroup>
 
 	<ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" Version="5.6.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
