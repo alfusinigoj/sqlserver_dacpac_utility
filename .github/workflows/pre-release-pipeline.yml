@@ -1,30 +1,22 @@
 name: Build and Publish
 
 on:
-  #workflow_dispatch:
   push:
-    branches:
-      - main
-    #tags:
-      #- 'v*'
-
+    branches:   
+      - feature/**
 jobs:
-  build_and_release:
-    name: Build & Release
-    runs-on: ubuntu-latest
-    container: mcr.microsoft.com/dotnet/core/sdk:3.1
+  build:
+    runs-on: windows-latest  
     steps:
       # Checks-out repository
       - uses: actions/checkout@v1
-        with:
-            ref: refs/heads/main
-            fetch-depth: 1
+
+      # Execute psake build script
+      - name: Execute psake build with argument (CiPublish2Myget)
+        shell: cmd
+        run: |
+          build.cmd CiPublish2Myget ${{ secrets.MYGET_API_KEY }}
         
-      # Execute psake build
-      - run: |
-          ./build.sh ci
-          cd _publish
-          ls
       - run: echo VERSION ENV VARIABLE $MY_VERSION 
 #      - name: Create Github Release
 #        #id: create_release

@@ -8,9 +8,6 @@ properties {
   $nuget = "nuget.exe"
   $msbuild = Get-LatestMsbuildLocation
   $vstest = get_vstest_executable
-  $local_nuget_repo = "c:\MyLocalNugetRepo"
-  $remote_nuget_repo = "https://api.nuget.org/v3/index.json"
-  $remote_myget_repo = "https://www.myget.org/F/ajaganathan/api/v3/index.json"
   $date = Get-Date 
 }
 
@@ -19,9 +16,6 @@ task default -depends DevBuild
 task cib -depends CiBuild
 task cipk -depends CiPack
 task dpk -depends DevPack
-task dr -depends DevPublish
-task cirn -depends CiPublish2Nuget
-task cirm -depends CiPublish2Myget
 task ? -depends help
 
 
@@ -46,11 +40,8 @@ task help {
 #These are the actual build tasks. They should be Pascal case by convention
 task DevBuild -depends SetDebugBuild, emitProperties, Restore, Clean, Compile, UnitTest
 task DevPack -depends DevBuild, Pack
-task DevPublish -depends DevPack, Push2Local
 task CiBuild -depends SetReleaseBuild, emitProperties, Restore, Clean, Compile, UnitTest
 task CiPack -depends CiBuild, Pack
-task CiPublish2Nuget -depends CiPack, Push2Nuget
-task CiPublish2Myget -depends CiPack, Push2Myget
 
 task SetDebugBuild {
     $script:project_config = "Debug"
@@ -108,55 +99,6 @@ task UnitTest -depends Compile{
             & $msbuild /t:pack /v:m $project /p:OutputPath=$publish_dir /p:Configuration=$project_config
             if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
         }
-	}
-
-	Pop-Location
-    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-}
-
-task Push2Local -depends Pack {
-    Write-Host "******************* Now pushing available nuget package(s) to $local_nuget_repo *********************"
-	Push-Location $base_dir
-	$packages = @(Get-ChildItem -Recurse -Filter "*.nupkg" | Where-Object {$_.Directory -like "*publish-artifacts*"}).FullName
-	if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-
-	foreach ($package in $packages) {
-		Write-Host "Executing nuget add for the package: $package"
-		exec { & $nuget add $package -Source $local_nuget_repo -Force}
-        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-        Write-Host "Warning: Possible overwrite of existing package $package, possible solution is to clear the cache(S)" -ForegroungColor Yellow
-	}
-
-	Pop-Location
-    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-}
-
-task Push2Nuget {
-    Write-Host "******************* Now pushing available nuget package(s) to nuget.org *********************"
-	Push-Location $base_dir
-	$packages = @(Get-ChildItem -Recurse -Filter "*.nupkg" | Where-Object {$_.Directory -like "*publish-artifacts*"}).FullName
-	if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-
-	foreach ($package in $packages) {
-		Write-Host "Executing nuget push for the package: $package"
-		exec { & $nuget push $package -Source $remote_nuget_repo -ApiKey $api_key}
-        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-	}
-
-	Pop-Location
-    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-}
-
-task Push2Myget {
-    Write-Host "******************* Now pushing available nuget package(s) to myget.org *********************"
-	Push-Location $base_dir
-	$packages = @(Get-ChildItem -Recurse -Filter "*.nupkg" | Where-Object {$_.Directory -like "*publish-artifacts*"}).FullName
-	if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
-
-	foreach ($package in $packages) {
-		Write-Host "Executing nuget push for the package: $package, apikey: $api_key"
-		exec { & $nuget push $package -Source $remote_myget_repo -ApiKey $api_key}
-        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 	}
 
 	Pop-Location
