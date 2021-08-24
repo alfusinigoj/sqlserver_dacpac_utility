@@ -5,7 +5,6 @@ properties {
   $publish_dir = "$base_dir\publish-artifacts"
   $solution_file = "$base_dir\$solution_name.sln"
   $project_file = "$base_dir\src\$solution_name\$solution_name.csproj"
-  $test_dir = "$base_dir\test"
   $nuget = "nuget.exe"
   $msbuild = Get-LatestMsbuildLocation
   $vstest = get_vstest_executable
@@ -23,12 +22,17 @@ task dp -depends DevPublish
 task ? -depends help
 
 task emitProperties {
+  Write-Host "base_dir=$base_dir"
   Write-Host "solution_name=$solution_name"
-  Write-Host "build_dir=$build_dir"
   Write-Host "solution_file=$solution_file"
-  Write-Host "test_dir=$test_dir"
+  Write-Host "project_file=$project_file"
   Write-Host "publish_dir=$publish_dir"
   Write-Host "project_config=$project_config"
+  Write-Host "release_id=$release_id"
+  Write-Host "platform=$platform"
+  Write-Host "version=$version"
+  Write-Host "nuget=$nuget"
+  Write-Host "vstest=$vstest"
   Write-Host "version=$version"
 }
 
