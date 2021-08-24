@@ -23,4 +23,5 @@ jobs:
           artifacts: "publish-artifacts/DacpacDeployUtil.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
           bodyFile: "RELEASE.md"
-          tag: ${{ env.GitVersion_FullSemVer }}
+          name: ${{ env.GitVersion_FullSemVer }}
+          tag: "v${{ env.GitVersion_FullSemVer }}"
