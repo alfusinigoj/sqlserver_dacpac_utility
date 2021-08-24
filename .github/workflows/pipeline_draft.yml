@@ -17,15 +17,15 @@ jobs:
         run: |
           build.cmd cip
       
-      - name: Read tag version from .version file
-        id: read_version
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./.version
+      # - name: Read tag version from .version file
+      #   id: read_version
+      #   uses: juliangruber/read-file-action@v1
+      #   with:
+      #     path: ./.version
       
-      - name: Set tag version to environment variable TAG_VERSION
-        run: |
-          echo "${{ steps.read_version.outputs.content }}" >> $GITHUB_ENV
+      # - name: Set tag version to environment variable TAG_VERSION
+      #   run: |
+      #     echo "${{ steps.read_version.outputs.content }}" >> $GITHUB_ENV
         
       - uses: ncipollo/release-action@v1
         with:
@@ -34,4 +34,4 @@ jobs:
           draft: true
           prerelease: true
           bodyFile: "RELEASE.md"
-          tag: ${{ env.TAG_VERSION }}
+          tag: ${{ env.GitVersion_FullSemVer }}
