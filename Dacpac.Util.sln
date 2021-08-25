@@ -9,12 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{645CD05A-00A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{48246214-AE96-45AE-B211-16F9B1D5699E}"
 	ProjectSection(SolutionItems) = preProject
-		build.bat = build.bat
-		build.properties = build.properties
-		build.sh = build.sh
 		configure-build.ps1 = configure-build.ps1
 		default.ps1 = default.ps1
-		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{79EA32EE-4576-41A1-8C8B-DD8ACF06676E}"
@@ -24,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{79EA32
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dacpac.Util.Tests", "src\Dacpac.Util.Tests\Dacpac.Util.Tests.csproj", "{DB39B413-2592-426D-96F1-575AD40D64CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dacpac.Util.Tests", "src\Dacpac.Util.Tests\Dacpac.Util.Tests.csproj", "{DB39B413-2592-426D-96F1-575AD40D64CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

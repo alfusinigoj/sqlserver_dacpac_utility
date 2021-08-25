@@ -12,6 +12,8 @@ properties {
   $version = get_version
   $release_id = "win-x64"
   $platform = "Any CPU"
+
+  $db_docker_instance_name = "dacpac-test-sql"
 }
 
 #These are aliases for other build tasks. They typically are named after the camelcase letters (rd = Rebuild Databases)
@@ -47,9 +49,9 @@ task help {
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
-task DevBuild -depends WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task DevBuild -depends RebuildDbDockerContainerInstance, WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
 task DevPublish -depends DevBuild, Publish
-task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile
 task CiPublish -depends CiBuild, Publish
 
 task SetDebugBuild {
@@ -104,12 +106,49 @@ task UnitTest -depends Compile{
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
  }
 
- task Publish -depends Clean, Restore {
+task Publish -depends Clean, Restore {
     Write-Host "******************* Now publishing the project $project_file *********************"
     exec { 
         & $msbuild /t:publish /v:m /p:PublishTrimmed="true" /p:PublishReadyToRun="false" /p:PublishSingleFile="true" /p:Platform=$platform /p:SelfContained="true" /p:RuntimeIdentifier=$release_id /p:PublishDir=$publish_dir /p:Configuration=$project_config /nologo /nologo $project_file 
     }
     if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+}
+
+task RebuildDbDockerContainerInstance {
+    Write-Host "******************* Rebuilding sql db docker instance $db_docker_instance_name *********************"
+    $result = is_docker_instance_running $db_docker_instance_name
+    if($result -eq "true") {
+        Invoke-Task StopDbDockerContainerInstance
+    }
+    $result = does_sql_container_exist $db_docker_instance_name
+    if($result -eq "true") {
+        Invoke-Task RemoveDbDockerContainerInstance
+    }
+    Invoke-Task CreateDbDockerContainerInstance
+}
+
+task StopDbDockerContainerInstance {
+    Write-Host "******************* Stopping sql db docker instance $db_docker_instance_name *********************"
+    exec {
+        & docker stop $db_docker_instance_name
+    }
+}
+
+task RemoveDbDockerContainerInstance {
+    Write-Host "******************* Deleting sql db docker instance $db_docker_instance_name *********************"
+    exec {
+        & docker rm $db_docker_instance_name
+    }
+}
+
+task CreateDbDockerContainerInstance {
+    Write-Host "******************* Starting sql db docker instance $db_docker_instance_name *********************"
+    exec {
+        & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1402:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+        # & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d microsoft/mssql-server-windows-express
+    }
+    Write-Host "******************* Sleeping for 15 seconds *********************"
+    Start-Sleep 15
 }
 
 # -------------------------------------------------------------------------------------------------------------
@@ -172,5 +211,25 @@ function global:get_vstest_executable() {
 function global:get_version() {
     $gitversion = "$base_dir\tools\gitversion\gitversion.exe"
     return exec { & $gitversion /output json /showvariable FullSemVer }
+}
+
+function global:is_docker_instance_running($instanceName) {
+    try {
+        $is_running = exec { & docker inspect -f '{{.State.Running}}' $instanceName }
+    }
+    catch {
+        return "false";
+    }
+    return $is_running;
+}
+
+function global:does_sql_container_exist($instanceName) {
+    try {
+        exec { & docker inspect -f '{{.State.Running}}' $instanceName }
+    }
+    catch {
+        return "false";
+    }
+    return "true";
 }
 
