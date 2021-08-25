@@ -12,9 +12,9 @@ using System.Net;
 
 namespace PivotalServices.DacpacDeploy.Utility
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             BuildCommandLine()
               .UseHost(_ => Host.CreateDefaultBuilder(),

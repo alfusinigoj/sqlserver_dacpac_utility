@@ -144,7 +144,8 @@ task RemoveDbDockerContainerInstance {
 task CreateDbDockerContainerInstance {
     Write-Host "******************* Starting sql db docker instance $db_docker_instance_name *********************"
     exec {
-        & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d microsoft/mssql-server-windows-developer
+        & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+        # & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d microsoft/mssql-server-windows-express
     }
     Write-Host "******************* Sleeping for 15 seconds *********************"
     Start-Sleep 15
