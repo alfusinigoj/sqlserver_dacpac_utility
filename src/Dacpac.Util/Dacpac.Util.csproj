@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>PivotalServices.DacpacDeploy.Utility</RootNamespace>
-    <AssemblyName>DacpacDeployUtil</AssemblyName>
+    <AssemblyName>dacpac-cli</AssemblyName>
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
