@@ -52,7 +52,7 @@ task help {
 task DevBuild -depends WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
 task DevPublish -depends DevBuild, Publish
 task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
-task CiPublish -depends CiBuild, Publish
+task CiPublish -depends RebuildDbDockerContainerInstance,CiBuild, Publish
 
 task SetDebugBuild {
     $script:project_config = "Debug"
