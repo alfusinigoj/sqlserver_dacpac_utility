@@ -49,7 +49,7 @@ task help {
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
-task DevBuild -depends WriteTagVersion, SetDebugBuild, emitProperties, RebuildDbDockerContainerInstance, Clean, Restore, Compile, UnitTest
+task DevBuild -depends RebuildDbDockerContainerInstance, WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
 task DevPublish -depends DevBuild, Publish
 task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile
 task CiPublish -depends CiBuild, Publish
@@ -144,7 +144,7 @@ task RemoveDbDockerContainerInstance {
 task CreateDbDockerContainerInstance {
     Write-Host "******************* Starting sql db docker instance $db_docker_instance_name *********************"
     exec {
-        & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+        & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1402:1433 -d mcr.microsoft.com/mssql/server:2019-latest
         # & docker run -e '"ACCEPT_EULA=Y"' -e '"MSSQL_AGENT_ENABLED=true"' -e '"SA_PASSWORD=IAmAlwaysKind!"' --name $db_docker_instance_name -p 1403:1433 -d microsoft/mssql-server-windows-express
     }
     Write-Host "******************* Sleeping for 15 seconds *********************"
