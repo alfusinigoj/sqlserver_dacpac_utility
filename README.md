@@ -26,13 +26,16 @@ Command line helper utility for executing SQL Server Data-Tier Application Frame
 
 ### Sample Commands
 ```
-DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=password1" -a [BlockOnPossibleDataLoss=false] -p [SERVER=server2] 
+DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=password1" -a [BlockOnPossibleDataLoss=false]
 ```
 
 ```
-DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false] -p [SERVER=server2]
+DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false]
 ```
+  
+### Compile locally
+- Download the source code
+- Execute the command `.\build.cmd dp`, which will produce the executable under `publish-artifacts`
 
-- **Hope this help you! For any issues, please raise issues [here](https://github.com/alfusinigoj/sqlserver_dacpac_utility/issues)**
-
-
+### Any issues or concerns
+- Please raise issues [here](https://github.com/alfusinigoj/sqlserver_dacpac_utility/issues)
