@@ -44,6 +44,9 @@ namespace PivotalServices.DacpacDeploy.Utility
 
         private void ReplaceTokensWithParameters(string packageFileName, string parameters)
         {
+            if (string.IsNullOrWhiteSpace(parameters))
+                return;
+
             var packageDir = $"{Path.Combine(GetBasePath(), Path.GetFileNameWithoutExtension(packageFileName))}";
 
             if (Directory.Exists(packageDir))

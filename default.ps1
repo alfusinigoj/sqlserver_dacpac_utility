@@ -1,46 +1,56 @@
-$script:project_config = "Release"
+$script:project_config = "Debug"
 
 properties {
-
   $base_dir = resolve-path .
-  $project_dir = "$base_dir\src\$solution_name"
-  $project_file = "$project_dir\$solution_name.csproj"
+  $publish_dir = "$base_dir\publish-artifacts"
   $solution_file = "$base_dir\$solution_name.sln"
-  $publish_dir = "$base_dir\_publish"
-  $release_id = "win-x64"
-
+  $project_file = "$base_dir\src\$solution_name\$solution_name.csproj"
+  $nuget = "nuget.exe"
+  $msbuild = Get-LatestMsbuildLocation
+  $vstest = get_vstest_executable
+  $date = Get-Date 
   $version = get_version
-  $date = Get-Date
-  $dotnet_exe = get-dotnet
-  $ReleaseNumber = $version
-  $buildNumber=0
-  
-  Write-Host "**********************************************************************"
-  Write-Host "Release Number: $ReleaseNumber"
-  Write-Host "**********************************************************************"
+  $release_id = "win-x64"
+  $platform = "Any CPU"
 }
-   
+
 #These are aliases for other build tasks. They typically are named after the camelcase letters (rd = Rebuild Databases)
-task default -depends DeveloperBuild
-task ci -depends IntegrationBuild
+task default -depends DevBuild
+task cib -depends CiBuild
+task cip -depends CiPublish
+task dp -depends DevPublish
 task ? -depends help
-task p -depends PublishLocally
+
+task emitProperties {
+  Write-Host "base_dir=$base_dir"
+  Write-Host "solution_name=$solution_name"
+  Write-Host "solution_file=$solution_file"
+  Write-Host "project_file=$project_file"
+  Write-Host "publish_dir=$publish_dir"
+  Write-Host "project_config=$project_config"
+  Write-Host "release_id=$release_id"
+  Write-Host "platform=$platform"
+  Write-Host "version=$version"
+  Write-Host "nuget=$nuget"
+  Write-Host "vstest=$vstest"
+  Write-Host "version=$version"
+}
 
 task help {
    Write-Help-Header
    Write-Help-Section-Header "Comprehensive Building"
    Write-Help-For-Alias "(default)" "Intended for first build or when you want a fresh, clean local copy"
-   Write-Help-For-Alias "ci" "Continuous Integration build (long and thorough) with packaging"
-   Write-Help-For-Alias "test" "Run local tests"
-   Write-Help-For-Alias "pr" "Intended for pub;ishing and running the app"
+   Write-Help-For-Alias "cip" "Continuous Integration build (long and thorough) with publishing"
+   Write-Help-For-Alias "dp" "Publish in developer machine, locally"
    Write-Help-Footer
    exit 0
 }
 
 #These are the actual build tasks. They should be Pascal case by convention
-task DeveloperBuild -depends SetDebugBuild, PackageRestore, Clean, Compile, RunTests
-task IntegrationBuild -depends SetReleaseBuild, PackageRestore, Clean, Compile, RunTests, Publish
-task PublishLocally -depends SetDebugBuild, PackageRestore, Clean, Compile, RunTests, Publish
+task DevBuild -depends WriteTagVersion, SetDebugBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task DevPublish -depends DevBuild, Publish
+task CiBuild -depends WriteTagVersion, SetReleaseBuild, emitProperties, Clean, Restore, Compile, UnitTest
+task CiPublish -depends CiBuild, Publish
 
 task SetDebugBuild {
     $script:project_config = "Debug"
@@ -48,53 +58,58 @@ task SetDebugBuild {
 
 task SetReleaseBuild {
     $script:project_config = "Release"
-	Push-Location Env:
-	[System.Environment]::SetEnvironmentVariable('MY_VERSION', $version, [System.EnvironmentVariableTarget]::User)
-	#$env:MY_VERSION = $version
-	Write-Host $env:MY_VERSION
-	Pop-Location
 }
 
-task SetCiProperties {
-	Write-Host "******************* Now Setting Ci properties *********************"
-    $buildNumber = $env:bamboo_buildNumber
-	Write-Host "Build Number: $buildNumber"
+task WriteTagVersion {
+    echo "TAG_VERSION=v$version" > .version
 }
 
 task Clean {
-	if (Test-Path $publish_dir) {
-		delete_directory $publish_dir
-	}
+    Write-Host "******************* Now cleaning the solution and artifacts *********************"
+    if (Test-Path $publish_dir) {
+        delete_directory $publish_dir
+    }
 
-	Write-Host "******************* Now Cleaning the Solution *********************"
-    exec { & $dotnet_exe clean -c $project_config $solution_file }
+    Get-ChildItem .\ -include obj,bin -Recurse | foreach ($_) { remove-item $_.fullname -Force -Recurse}
+
+    exec { 
+        & $msbuild /t:clean /v:m /p:Configuration=$project_config $solution_file 
+    }
+    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
 
-task PackageRestore {
-	Write-Host "******************* Now restoring the Solution packages *********************"
-	exec { & $dotnet_exe restore $solution_file }
+task Restore {
+    Write-Host "******************* Now restoring the solution dependencies *********************"
+    exec { 
+        & $msbuild /t:restore $solution_file /v:m /p:NuGetInteractive="true" /p:RuntimeIdentifier=$release_id
+        if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+    }
 }
 
-task Compile {
-	Write-Host "******************* Now Compiling the solution $solution_file *********************"
-	exec { & $dotnet_exe build -c $project_config $solution_file}
+task Compile -depends Restore {
+    Write-Host "******************* Now compiling the solution *********************"
+    exec { 
+        & $msbuild /t:build /v:m /p:Configuration=$project_config /nologo /p:Platform=$platform /nologo $solution_file 
+    }
+    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
 
-task RunTests {
-   Write-Host "******************* Now running Tests *********************"
-   Write-Host $dotnet_exe test
-   Write-Host $project_config 
-   Write-Host "$project_dir.Tests"
-   exec { & $dotnet_exe test -c $project_config "$project_dir.Tests" -- xunit.parallelizeTestCollections=true }
-}
+task UnitTest -depends Compile{
+    Write-Host "******************* Now running unit tests *********************"
+    Push-Location $base_dir
+    $test_assemblies = @((Get-ChildItem -Recurse -Filter "*Tests.dll" | Where-Object {$_.Directory -like '*bin*'} | Where-Object {$_.Directory -notlike '*ref*'}).FullName) -join ' '
+    Write-Host "Executing tests on the following assemblies: $test_assemblies"
+    Start-Process -FilePath $vstest -ArgumentList $test_assemblies ,"/Parallel" -NoNewWindow -Wait
+    Pop-Location
+    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
+ }
 
-task Publish {
-	Write-Host "******************* Publishing to $publish_dir *********************"
-	if (!(Test-Path $publish_dir)) {
-		New-Item -ItemType Directory -Force -Path $publish_dir
-	}
-	$assemblyVersion="$version"+"."+"$buildNumber"
-	exec { & $dotnet_exe publish -c $project_config $project_file -o $publish_dir -r $release_id -p:AssemblyVersion=$assemblyVersion -p:Version=$version -p:FileVersion=$assemblyVersion}
+ task Publish -depends Clean, Restore {
+    Write-Host "******************* Now publishing the project $project_file *********************"
+    exec { 
+        & $msbuild /t:publish /v:m /p:PublishTrimmed="true" /p:PublishReadyToRun="false" /p:PublishSingleFile="true" /p:Platform=$platform /p:SelfContained="true" /p:RuntimeIdentifier=$release_id /p:PublishDir=$publish_dir /p:Configuration=$project_config /nologo /nologo $project_file 
+    }
+    if($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}
 }
 
 # -------------------------------------------------------------------------------------------------------------
@@ -104,7 +119,7 @@ task Publish {
 function Write-Help-Header($description) {
    Write-Host ""
    Write-Host "********************************" -foregroundcolor DarkGreen -nonewline;
-   Write-Host " HELP " -foregroundcolor Green  -nonewline; 
+   Write-Host " HELP " -foregroundcolor Green  -nonewline;
    Write-Host "********************************"  -foregroundcolor DarkGreen
    Write-Host ""
    Write-Host "This build script has the following common build " -nonewline;
@@ -126,16 +141,17 @@ function Write-Help-Section-Header($description) {
 
 function Write-Help-For-Alias($alias,$description) {
    Write-Host "  > " -nonewline;
-   Write-Host "$alias" -foregroundcolor Green -nonewline; 
-   Write-Host " = " -nonewline; 
+   Write-Host "$alias" -foregroundcolor Green -nonewline;
+   Write-Host " = " -nonewline;
    Write-Host "$description"
 }
 
 # -------------------------------------------------------------------------------------------------------------
-# generalized functions 
+# generalized functions
 # --------------------------------------------------------------------------------------------------------------
+
 function global:delete_file($file) {
-    if($file) { remove-item $file -force -ErrorAction SilentlyContinue | out-null } 
+    if($file) { remove-item $file -force -ErrorAction SilentlyContinue | out-null }
 }
 
 function global:delete_directory($directory_name)
@@ -143,28 +159,18 @@ function global:delete_directory($directory_name)
   rd $directory_name -recurse -force  -ErrorAction SilentlyContinue | out-null
 }
 
-function global:get_dacDll(){
-    return "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\140\Microsoft.SqlServer.Dac.dll";
-}
-
 function global:delete_files($directory_name) {
     Get-ChildItem -Path $directory_name -Include * -File -Recurse | foreach { $_.Delete()}
 }
 
-function global:get_vstest_executable($lookin_path) {
-    $vstest_exe = Get-ChildItem $lookin_path -Filter Microsoft.TestPlatform* | Select-Object -First 1 | Get-ChildItem -Recurse -Filter vstest.console.exe | % { $_.FullName }
+function global:get_vstest_executable() {
+    $vstest_exe = exec { & "c:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe"  -latest -products * -requires Microsoft.VisualStudio.PackageGroup.TestTools.Core -property installationPath}
+    $vstest_exe = join-path $vstest_exe 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
     return $vstest_exe
 }
 
-function global:get_version(){
-	Write-Host "******************* Getting the Version Number ********************"
-	$file_content = Get-Content "./build.properties" -raw
-    $file_content = [Regex]::Escape($file_content)
-    $file_content = $file_content -replace "(\\r)?\\n", [Environment]::NewLine
-    $configuration = ConvertFrom-StringData($file_content)
-    return $configuration.'version'
+function global:get_version() {
+    $gitversion = "$base_dir\tools\gitversion\gitversion.exe"
+    return exec { & $gitversion /output json /showvariable FullSemVer }
 }
 
-function global:get-dotnet(){
-	return (Get-Command dotnet).Path
-}
