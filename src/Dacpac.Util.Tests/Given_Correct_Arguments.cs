@@ -1,4 +1,4 @@
-using PivotalServices.DacpacDeploy.Utility;
+using Dacpac.CommandLine;
 using System;
 using System.Data.SqlClient;
 using Xunit;

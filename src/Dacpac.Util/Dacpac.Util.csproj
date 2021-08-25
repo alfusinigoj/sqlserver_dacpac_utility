@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>PivotalServices.DacpacDeploy.Utility</RootNamespace>
+    <RootNamespace>Dacpac.CommandLine</RootNamespace>
     <AssemblyName>dacpac-cli</AssemblyName>
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Exe</OutputType>

@@ -6,7 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 
-namespace PivotalServices.DacpacDeploy.Utility
+namespace Dacpac.CommandLine
 {
     public class DacpacProcessor : IProcessor
     {

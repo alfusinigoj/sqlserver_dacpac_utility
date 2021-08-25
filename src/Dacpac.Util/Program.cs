@@ -10,7 +10,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Net;
 
-namespace PivotalServices.DacpacDeploy.Utility
+namespace Dacpac.CommandLine
 {
     public class Program
     {

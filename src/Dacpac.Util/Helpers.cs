@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PivotalServices.DacpacDeploy.Utility
+namespace Dacpac.CommandLine
 {
     public class Helpers
     {
