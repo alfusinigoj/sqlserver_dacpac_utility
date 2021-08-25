@@ -1,15 +1,15 @@
 
-### PivotalServices.DacpacDeploy.Utility (DacpacDeployUtil.exe)
+### SqlServer Dacpac Utility (dacpac-cli.exe)
 Command line helper utility for executing SQL Server Data-Tier Application Framework package (dacpac). For more info, refer [here](https://docs.microsoft.com/en-us/dotnet/api/microsoft.sqlserver.dac?view=sql-dacfx-150)
 
 ### Release
 
 - [![Prod Release](https://github.com/alfusinigoj/sqlserver_dacpac_utility/actions/workflows/pipeline_release.yml/badge.svg)](https://github.com/alfusinigoj/sqlserver_dacpac_utility/actions/workflows/pipeline_release.yml)
 
-- Download latest `DacpacDeployUtil.exe` [here](https://github.com/alfusinigoj/sqlserver_dacpac_utility/releases)
+- Download latest `dacpac-cli.exe` [here](https://github.com/alfusinigoj/sqlserver_dacpac_utility/releases)
 
 ### Usage:
-  `DacpacDeployUtil.exe [options]`
+  `dacpac-cli.exe [options]`
 
 | Options | Is Required | Description | Can pull from Environment Variable |
 | --- | --- | --- |-- |
@@ -26,11 +26,11 @@ Command line helper utility for executing SQL Server Data-Tier Application Frame
 
 ### Sample Commands
 ```
-DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=password1" -a [BlockOnPossibleDataLoss=false]
+dacpac-cli.exe -c deploy -f MyDB.dacpac -n "Data Source=server1;Initial Catalog=db1;Persist Security Info=True;User ID=user1;Password=password1" -a [BlockOnPossibleDataLoss=false]
 ```
 
 ```
-DacpacDeployUtil.exe -c deploy -f MyDB.dacpac -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false]
+dacpac-cli.exe -c deploy -f MyDB.dacpac -n "env:ConnectionString" -a [BlockOnPossibleDataLoss=false]
 ```
   
 ### Compile locally
