@@ -20,7 +20,7 @@ jobs:
       # Create github release
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "publish-artifacts/DacpacDeployUtil.exe"
+          artifacts: "publish-artifacts/dacpac-cli.exe"
           token: ${{ secrets.GITHUB_TOKEN }}
           bodyFile: "RELEASE.md"
           name: ${{ env.GitVersion_FullSemVer }}
